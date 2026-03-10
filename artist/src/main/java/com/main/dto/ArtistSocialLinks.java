@@ -1,0 +1,31 @@
+package com.main.dto;
+
+
+import com.main.entity.Artist;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "artist_social_links")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ArtistSocialLinks {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "artist_id", nullable = false)
+    private Artist artist;
+
+    private String instagram;
+    private String twitter;
+    private String youtube;
+    private String spotify;
+    private String website;
+}

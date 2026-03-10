@@ -1,0 +1,130 @@
+package com.user.service;
+
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.user.dto.AuthResponse;
+import com.user.dto.RegisterRequest;
+import com.user.exception.UserAlreadyExistsException;
+import com.user.repository.UserRepository;
+import com.user.security.JwtService;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+    public AuthResponse register(RegisterRequest request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException("Email already registered");
+        }
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new UserAlreadyExistsException("Username already taken");
+        }
+
+        // Only USER or ARTIST allowed
+        Role role = Role.USER;
+        if (request.getRole() != null &&
+                request.getRole().equalsIgnoreCase("ARTIST")) {
+            role = Role.ARTIST;
+        }
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .displayName(request.getDisplayName() != null
+                        ? request.getDisplayName()
+                        : request.getUsername())
+                .role(role)
+                .isActive(true)
+                .build();
+
+        User saved = userRepository.save(user);
+
+        String token = jwtService.generateToken(
+                saved.getEmail(),
+                saved.getRole().name(),
+                saved.getId()
+        );
+
+        return AuthResponse.builder()
+                .token(token)
+                .userId(saved.getId())
+                .username(saved.getUsername())
+                .email(saved.getEmail())
+                .role(saved.getRole().name())
+                .build();
+    }
+
+    public AuthResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getPassword(),
+                user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        String token = jwtService.generateToken(
+                user.getEmail(),
+                user.getRole().name(),
+                user.getId()
+        );
+
+        return AuthResponse.builder()
+                .token(token)
+                .userId(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
+    }
+
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with id: " + id));
+        return mapToResponse(user);
+    }
+
+    public UserResponse updateProfile(Long id,
+                                      UpdateProfileRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found with id: " + id));
+
+        if (request.getDisplayName() != null)
+            user.setDisplayName(request.getDisplayName());
+        if (request.getBio() != null)
+            user.setBio(request.getBio());
+        if (request.getProfilePicture() != null)
+            user.setProfilePicture(request.getProfilePicture());
+
+        return mapToResponse(userRepository.save(user));
+    }
+
+    private UserResponse mapToResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .displayName(user.getDisplayName())
+                .bio(user.getBio())
+                .profilePicture(user.getProfilePicture())
+                .role(user.getRole().name())
+                .createdAt(user.getCreatedAt())
+                .build();
+    }
+}

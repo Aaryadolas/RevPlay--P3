@@ -1,0 +1,12 @@
+package com.main.dto;
+
+import lombok.Data;
+
+@Data
+public class SocialLinksRequest {
+    private String instagram;
+    private String twitter;
+    private String youtube;
+    private String spotify;
+    private String website;
+}

@@ -1,0 +1,17 @@
+package com.main.dto;
+
+
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+public class SocialLinksRequest {
+    private String instagram;
+    private String twitter;
+    private String youtube;
+    private String spotify;
+    private String website;
+}
