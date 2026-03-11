@@ -4,6 +4,7 @@ package com.revplay.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import com.revplay.client.MusicServiceClient;
 import com.revplay.dto.AddSongRequest;
 import com.revplay.dto.CreatePlaylistRequest;
 import com.revplay.dto.PlaylistResponse;
@@ -30,6 +31,7 @@ public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final PlaylistSongRepository playlistSongRepository;
     private final PlaylistFollowerRepository playlistFollowerRepository;
+    private final MusicServiceClient musicServiceClient;
 
     // Create playlist
     public PlaylistResponse createPlaylist(
@@ -109,6 +111,15 @@ public class PlaylistService {
     public PlaylistResponse addSongToPlaylist(Long playlistId,
             AddSongRequest request) {
 
+        // validate song exists in music-service
+        try {
+            musicServiceClient.getSongById(request.getSongId());
+        } catch (Exception e) {
+            throw new RuntimeException(
+                "Song not found with id: " + request.getSongId());
+        }
+
+        // rest of existing code stays same...
         Playlist playlist = playlistRepository.findById(playlistId)
                 .orElseThrow(() ->
                     new ResourceNotFoundException(

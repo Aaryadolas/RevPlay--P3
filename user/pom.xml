@@ -107,7 +107,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency> 
+        
+        <!-- OpenFeign -->
+	<dependency>
+	    <groupId>org.springframework.cloud</groupId>
+	    <artifactId>spring-cloud-starter-openfeign</artifactId>
+	</dependency>
 
     </dependencies>
 

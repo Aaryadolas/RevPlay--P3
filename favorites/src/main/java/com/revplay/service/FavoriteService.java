@@ -4,6 +4,7 @@ package com.revplay.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import com.revplay.client.MusicServiceClient;
 import com.revplay.dto.FavoriteCountResponse;
 import com.revplay.dto.FavoriteRequest;
 import com.revplay.dto.FavoriteResponse;
@@ -19,10 +20,19 @@ import java.util.stream.Collectors;
 public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
-
+    private final MusicServiceClient musicServiceClient;
     // Add song to favorites
     public FavoriteResponse addFavorite(FavoriteRequest request) {
 
+        // validate song exists in music-service
+        try {
+            musicServiceClient.getSongById(request.getSongId());
+        } catch (Exception e) {
+            throw new RuntimeException(
+                "Song not found with id: " + request.getSongId());
+        }
+
+        // rest of existing code stays same...
         if (favoriteRepository.existsByUserIdAndSongId(
                 request.getUserId(), request.getSongId())) {
             throw new RuntimeException(
