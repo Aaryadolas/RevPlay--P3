@@ -6,6 +6,10 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="D:\revaturespring\RevplayProjectP3\favorites"/>
+			<item value="D:\revaturespring\RevplayProjectP3\playlist"/>
+			<item value="D:\revaturespring\RevplayProjectP3\music"/>
+			<item value="D:\revaturespring\RevplayProjectP3\user"/>
 			<item value="C:\Users\aryad\OneDrive\Desktop\P3 Project\user"/>
 		</list>
 		<section name="SmartImportWizard.dialogBounds">

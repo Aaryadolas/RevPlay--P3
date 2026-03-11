@@ -1,7 +1,0 @@
-package com.user.security;
-
-import org.springframework.web.filter.OncePerRequestFilter;
-
-public class JwtAuthFilter extends OncePerRequestFilter {
-
-}
