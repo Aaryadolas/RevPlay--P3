@@ -1,0 +1,271 @@
+version: '3.8'
+
+services:
+
+  # ─────────────────────────────────────
+  # MySQL Database
+  # ─────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: revplay-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - revplay-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping",
+             "-h", "localhost",
+             "-u", "root",
+             "-pyourpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ─────────────────────────────────────
+  # Eureka Server
+  # ─────────────────────────────────────
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: revplay-eureka
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - revplay-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet",
+             "--tries=1", "--spider",
+             "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ─────────────────────────────────────
+  # User Service
+  # ─────────────────────────────────────
+  user-service:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    container_name: revplay-user
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_users?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - revplay-network
+
+  # ─────────────────────────────────────
+  # Artist Service
+  # ─────────────────────────────────────
+  artist-service:
+    build:
+      context: ./artist
+      dockerfile: Dockerfile
+    container_name: revplay-artist
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_artists?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - revplay-network
+
+  # ─────────────────────────────────────
+  # Music Service
+  # ─────────────────────────────────────
+  music-service:
+    build:
+      context: ./music
+      dockerfile: Dockerfile
+    container_name: revplay-music
+    restart: always
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_music?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - revplay-network
+
+  # ─────────────────────────────────────
+  # Playlist Service
+  # ─────────────────────────────────────
+  playlist-service:
+    build:
+      context: ./playlist
+      dockerfile: Dockerfile
+    container_name: revplay-playlist
+    restart: always
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_playlists?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - revplay-network
+
+  # ─────────────────────────────────────
+  # Favorites Service
+  # ─────────────────────────────────────
+  favorites-service:
+    build:
+      context: ./favorites
+      dockerfile: Dockerfile
+    container_name: revplay-favorites
+    restart: always
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_favorites?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - revplay-network
+
+  # ─────────────────────────────────────
+  # History Service
+  # ─────────────────────────────────────
+  history-service:
+    build:
+      context: ./history
+      dockerfile: Dockerfile
+    container_name: revplay-history
+    restart: always
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_history?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - revplay-network
+
+  # ─────────────────────────────────────
+  # Analytics Service
+  # ─────────────────────────────────────
+  analytics-service:
+    build:
+      context: ./analytics-service
+      dockerfile: Dockerfile
+    container_name: revplay-analytics
+    restart: always
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_analytics?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - revplay-network
+
+  # ─────────────────────────────────────
+  # API Gateway
+  # ─────────────────────────────────────
+  api-gateway:
+    build:
+      context: ./revplay-api-gateway
+      dockerfile: Dockerfile
+    container_name: revplay-gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      artist-service:
+        condition: service_started
+      music-service:
+        condition: service_started
+      playlist-service:
+        condition: service_started
+      favorites-service:
+        condition: service_started
+      history-service:
+        condition: service_started
+      analytics-service:
+        condition: service_started
+    networks:
+      - revplay-network
+
+# ─────────────────────────────────────
+# Networks
+# ─────────────────────────────────────
+networks:
+  revplay-network:
+    driver: bridge
+
+# ─────────────────────────────────────
+# Volumes
+# ─────────────────────────────────────
+volumes:
+  mysql_data:
+    driver: local

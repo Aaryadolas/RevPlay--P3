@@ -3,12 +3,12 @@ server:
 
 spring:
   application:
-    name: favorites-service
+    name: favorites-service 
 
   datasource:
     url: jdbc:mysql://localhost:3306/revplay_favorites?createDatabaseIfNotExist=true
     username: root
-    password: yourpassword
+    password: aryaroot
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

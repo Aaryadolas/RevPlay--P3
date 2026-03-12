@@ -3,12 +3,12 @@ server:
 
 spring:
   application:
-    name: music-service
+    name: music
 
   datasource:
     url: jdbc:mysql://localhost:3306/revplay_music?createDatabaseIfNotExist=true
     username: root
-    password: yourpassword
+    password: aryaroot
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

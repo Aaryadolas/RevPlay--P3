@@ -1,0 +1,39 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: artist-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/revplay_artists?createDatabaseIfNotExist=true
+    username: root
+    password: aryaroot
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+jwt:
+  secret: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true 
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+circuitbreaker: 
+  enabled: true
