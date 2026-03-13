@@ -1,4 +1,4 @@
-package com.revplay.dto;
+package com.revplay.analyticsservice.dto;
 
 
 import lombok.*;

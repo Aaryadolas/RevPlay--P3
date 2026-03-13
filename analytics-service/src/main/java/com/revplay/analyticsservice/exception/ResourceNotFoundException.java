@@ -1,4 +1,4 @@
-package com.revplay.exception;
+package com.revplay.analyticsservice.exception;
 
 
 public class ResourceNotFoundException extends RuntimeException {

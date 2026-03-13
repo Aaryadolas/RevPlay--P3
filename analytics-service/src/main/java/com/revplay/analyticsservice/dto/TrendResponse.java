@@ -1,4 +1,4 @@
-package com.revplay.dto;
+package com.revplay.analyticsservice.dto;
 
 
 import lombok.*;
@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TopSongResponse {
-    private Long songId;
+public class TrendResponse {
+    private String period;
     private Long totalPlays;
 }

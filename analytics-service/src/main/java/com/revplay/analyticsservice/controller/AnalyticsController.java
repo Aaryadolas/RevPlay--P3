@@ -1,4 +1,4 @@
-package com.revplay.controller;
+package com.revplay.analyticsservice.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -7,12 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.revplay.dto.ArtistDashboardResponse;
-import com.revplay.dto.SongPlayRequest;
-import com.revplay.dto.SongPlayResponse;
-import com.revplay.dto.SongStatsResponse;
-import com.revplay.dto.TrendResponse;
-import com.revplay.service.AnalyticsService;
+import com.revplay.analyticsservice.dto.ArtistDashboardResponse;
+import com.revplay.analyticsservice.dto.SongPlayRequest;
+import com.revplay.analyticsservice.dto.SongPlayResponse;
+import com.revplay.analyticsservice.dto.SongStatsResponse;
+import com.revplay.analyticsservice.dto.TrendResponse;
+import com.revplay.analyticsservice.service.AnalyticsService;
 
 import java.util.List;
 

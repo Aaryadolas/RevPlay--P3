@@ -1,11 +1,12 @@
-package com.revplay.repository;
+package com.revplay.analyticsservice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.revplay.entity.SongPlay;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.revplay.analyticsservice.entity.SongPlay;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

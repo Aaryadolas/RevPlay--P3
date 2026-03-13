@@ -6,7 +6,6 @@ import com.main.entity.Artist;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
 @Table(name = "artist_social_links")
 @Getter
 @Setter

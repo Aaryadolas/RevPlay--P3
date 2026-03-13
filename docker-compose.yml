@@ -10,7 +10,7 @@ services:
     container_name: revplay-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_ROOT_PASSWORD: aryaroot
     ports:
       - "3306:3306"
     volumes:
@@ -21,7 +21,7 @@ services:
       test: ["CMD", "mysqladmin", "ping",
              "-h", "localhost",
              "-u", "root",
-             "-pyourpassword"]
+             "-paryaroot"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -61,7 +61,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_users?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_DATASOURCE_PASSWORD: aryaroot
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
     depends_on:
@@ -86,7 +86,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_artists?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_DATASOURCE_PASSWORD: aryaroot
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
     depends_on:
@@ -111,7 +111,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_music?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_DATASOURCE_PASSWORD: aryaroot
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
     depends_on:
@@ -136,7 +136,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_playlists?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_DATASOURCE_PASSWORD: aryaroot
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
     depends_on:
@@ -161,7 +161,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_favorites?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_DATASOURCE_PASSWORD: aryaroot
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
     depends_on:
@@ -186,7 +186,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_history?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_DATASOURCE_PASSWORD: aryaroot
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
     depends_on:
@@ -211,7 +211,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/revplay_analytics?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_DATASOURCE_PASSWORD: aryaroot
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       JWT_SECRET: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
     depends_on:

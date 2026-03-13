@@ -1,20 +1,20 @@
-package com.revplay.service;
+package com.revplay.analyticsservice.service;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import com.revplay.client.FavoritesServiceClient;
-import com.revplay.client.HistoryServiceClient;
-import com.revplay.client.MusicServiceClient;
-import com.revplay.dto.ArtistDashboardResponse;
-import com.revplay.dto.SongPlayRequest;
-import com.revplay.dto.SongPlayResponse;
-import com.revplay.dto.SongStatsResponse;
-import com.revplay.dto.TopSongResponse;
-import com.revplay.dto.TrendResponse;
-import com.revplay.entity.SongPlay;
-import com.revplay.repository.SongPlayRepository;
+import com.revplay.analyticsservice.client.FavoritesServiceClient;
+import com.revplay.analyticsservice.client.HistoryServiceClient;
+import com.revplay.analyticsservice.client.MusicServiceClient;
+import com.revplay.analyticsservice.dto.ArtistDashboardResponse;
+import com.revplay.analyticsservice.dto.SongPlayRequest;
+import com.revplay.analyticsservice.dto.SongPlayResponse;
+import com.revplay.analyticsservice.dto.SongStatsResponse;
+import com.revplay.analyticsservice.dto.TopSongResponse;
+import com.revplay.analyticsservice.dto.TrendResponse;
+import com.revplay.analyticsservice.entity.SongPlay;
+import com.revplay.analyticsservice.repository.SongPlayRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

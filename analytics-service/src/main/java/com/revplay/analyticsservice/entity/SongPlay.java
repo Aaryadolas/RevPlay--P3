@@ -1,4 +1,4 @@
-package com.revplay.entity;
+package com.revplay.analyticsservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

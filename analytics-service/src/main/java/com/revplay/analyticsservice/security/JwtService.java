@@ -1,4 +1,4 @@
-package com.revplay.security;
+package com.revplay.analyticsservice.security;
 
 
 import io.jsonwebtoken.*;
