@@ -1,7 +1,5 @@
 package com.main.controller;
 
-
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +26,9 @@ public class ArtistController {
     @PostMapping
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<ArtistResponse> createArtist(
-            @Valid @RequestBody CreateArtistRequest request) {
+            @Valid @RequestBody CreateArtistRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        request.setUserId(userId); // ← get userId from token
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(artistService.createArtist(request));
     }
@@ -44,7 +44,8 @@ public class ArtistController {
     @GetMapping("/public/user/{userId}")
     public ResponseEntity<ArtistResponse> getArtistByUserId(
             @PathVariable Long userId) {
-        return ResponseEntity.ok(artistService.getArtistByUserId(userId));
+        return ResponseEntity.ok(
+                artistService.getArtistByUserId(userId));
     }
 
     // Get all artists — public
@@ -58,8 +59,10 @@ public class ArtistController {
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<ArtistResponse> updateArtist(
             @PathVariable Long id,
-            @RequestBody UpdateArtistRequest request) {
-        return ResponseEntity.ok(artistService.updateArtist(id, request));
+            @RequestBody UpdateArtistRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        return ResponseEntity.ok(
+                artistService.updateArtist(id, request));
     }
 
     // Update social links — only ARTIST role
@@ -67,7 +70,8 @@ public class ArtistController {
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<ArtistResponse> updateSocialLinks(
             @PathVariable Long id,
-            @RequestBody SocialLinksRequest request) {
+            @RequestBody SocialLinksRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 artistService.updateSocialLinks(id, request));
     }
@@ -75,7 +79,9 @@ public class ArtistController {
     // Delete artist — only ARTIST role
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ARTIST')")
-    public ResponseEntity<String> deleteArtist(@PathVariable Long id) {
+    public ResponseEntity<String> deleteArtist(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long userId) {
         artistService.deleteArtist(id);
         return ResponseEntity.ok("Artist deleted successfully");
     }
