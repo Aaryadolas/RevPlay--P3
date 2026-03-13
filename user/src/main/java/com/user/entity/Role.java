@@ -2,6 +2,6 @@ package com.user.entity;
 
 public enum Role {
 	
-	User,
-	Artist
+	USER,
+	ARTIST
 }

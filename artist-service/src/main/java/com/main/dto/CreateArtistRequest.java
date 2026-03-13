@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class CreateArtistRequest {
 
-    @NotNull(message = "User ID is required")
+ 
     private Long userId;
 
     @NotBlank(message = "Artist name is required")

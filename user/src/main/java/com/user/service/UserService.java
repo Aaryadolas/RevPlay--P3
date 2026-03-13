@@ -1,6 +1,5 @@
 package com.user.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,24 +27,29 @@ public class UserService {
     public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new UserAlreadyExistsException("Email already registered");
+            throw new UserAlreadyExistsException(
+                    "Email already registered");
         }
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new UserAlreadyExistsException("Username already taken");
+            throw new UserAlreadyExistsException(
+                    "Username already taken");
         }
 
-        // Only USER or ARTIST allowed
-        Role role = Role.User;
+        // Role is set automatically from controller
+        // USER → /api/users/register
+        // ARTIST → /api/users/register/artist
+        Role role = Role.USER;
         if (request.getRole() != null &&
                 request.getRole().equalsIgnoreCase("ARTIST")) {
-            role = Role.Artist;
+            role = Role.ARTIST;
         }
 
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(passwordEncoder.encode(
+                        request.getPassword()))
                 .displayName(request.getDisplayName() != null
                         ? request.getDisplayName()
                         : request.getUsername())
@@ -74,7 +78,8 @@ public class UserService {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+                        new ResourceNotFoundException(
+                                "User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(),
                 user.getPassword())) {
@@ -105,7 +110,7 @@ public class UserService {
     }
 
     public UserResponse updateProfile(Long id,
-                                      UpdateProfileRequest request) {
+            UpdateProfileRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(

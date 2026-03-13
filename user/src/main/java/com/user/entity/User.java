@@ -39,7 +39,6 @@ public class User {
     private String profilePicture;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Role role;
 
     @Builder.Default

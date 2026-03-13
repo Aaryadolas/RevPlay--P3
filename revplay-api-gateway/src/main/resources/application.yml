@@ -4,116 +4,44 @@ server:
 spring:
   application:
     name: api-gateway
-
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-
       routes:
-
-        # user-service
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/users/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: user-service
-                fallbackUri: forward:/fallback/user
 
-        # artist-service
         - id: artist-service
           uri: lb://artist-service
           predicates:
             - Path=/api/artists/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: artist-service
-                fallbackUri: forward:/fallback/artist
 
-        # music-service songs
-        - id: music-service-songs
+        - id: music-service
           uri: lb://music-service
           predicates:
-            - Path=/api/songs/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: music-service
-                fallbackUri: forward:/fallback/music
+            - Path=/api/songs/**,/api/albums/**,/api/genres/**
 
-        # music-service albums
-        - id: music-service-albums
-          uri: lb://music-service
-          predicates:
-            - Path=/api/albums/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: music-service
-                fallbackUri: forward:/fallback/music
-
-        # music-service genres
-        - id: music-service-genres
-          uri: lb://music-service
-          predicates:
-            - Path=/api/genres/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: music-service
-                fallbackUri: forward:/fallback/music
-
-        # playlist-service
         - id: playlist-service
           uri: lb://playlist-service
           predicates:
             - Path=/api/playlists/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: playlist-service
-                fallbackUri: forward:/fallback/playlist
 
-        # favorites-service
         - id: favorites-service
           uri: lb://favorites-service
           predicates:
             - Path=/api/favorites/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: favorites-service
-                fallbackUri: forward:/fallback/favorites
 
-        # history-service
         - id: history-service
           uri: lb://history-service
           predicates:
             - Path=/api/history/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: history-service
-                fallbackUri: forward:/fallback/history
 
-        # analytics-service
         - id: analytics-service
           uri: lb://analytics-service
           predicates:
             - Path=/api/analytics/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: analytics-service
-                fallbackUri: forward:/fallback/analytics
 
-# eureka
 eureka:
   client:
     service-url:
@@ -121,49 +49,9 @@ eureka:
   instance:
     prefer-ip-address: true
 
-# jwt
 jwt:
   secret: cmV2cGxheV9zdXBlcl9zZWNyZXRfa2V5X2Zvcl9qd3RfMjAyNF92ZXJ5X2xvbmc=
 
-# circuit breaker
-resilience4j:
-  circuitbreaker:
-    instances:
-      user-service:
-        sliding-window-size: 10
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-      artist-service:
-        sliding-window-size: 10
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-      music-service:
-        sliding-window-size: 10
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-      playlist-service:
-        sliding-window-size: 10
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-      favorites-service:
-        sliding-window-size: 10
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-      history-service:
-        sliding-window-size: 10
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-      analytics-service:
-        sliding-window-size: 10
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-
-# actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
