@@ -1,6 +1,5 @@
 package com.revplay.controller;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,31 +22,33 @@ public class HistoryController {
     // Record song play
     @PostMapping
     public ResponseEntity<HistoryResponse> recordPlay(
-            @Valid @RequestBody HistoryRequest request) {
+            @Valid @RequestBody HistoryRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        request.setUserId(userId); // ← from token
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(historyService.recordPlay(request));
     }
 
     // Get full history by user
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     public ResponseEntity<List<HistoryResponse>> getFullHistory(
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 historyService.getFullHistoryByUser(userId));
     }
 
     // Get last 50 recently played
-    @GetMapping("/user/{userId}/recent")
+    @GetMapping("/user/recent")
     public ResponseEntity<List<HistoryResponse>> getRecentlyPlayed(
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 historyService.getRecentlyPlayed(userId));
     }
 
     // Get total plays count by user
-    @GetMapping("/user/{userId}/count")
+    @GetMapping("/user/count")
     public ResponseEntity<Integer> getTotalPlaysByUser(
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 historyService.getTotalPlaysByUser(userId));
     }
@@ -61,25 +62,25 @@ public class HistoryController {
     }
 
     // Get total listening time by user in seconds
-    @GetMapping("/user/{userId}/listening-time")
+    @GetMapping("/user/listening-time")
     public ResponseEntity<Long> getTotalListeningTime(
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 historyService.getTotalListeningTime(userId));
     }
 
     // Get distinct songs played by user
-    @GetMapping("/user/{userId}/songs")
+    @GetMapping("/user/songs")
     public ResponseEntity<List<Long>> getDistinctSongsPlayed(
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 historyService.getDistinctSongsPlayed(userId));
     }
 
     // Clear all history by user
-    @DeleteMapping("/user/{userId}/clear")
+    @DeleteMapping("/user/clear")
     public ResponseEntity<String> clearHistory(
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         historyService.clearHistory(userId);
         return ResponseEntity.ok(
             "Listening history cleared successfully");
