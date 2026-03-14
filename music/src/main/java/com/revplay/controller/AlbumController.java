@@ -1,6 +1,5 @@
 package com.revplay.controller;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,9 @@ public class AlbumController {
     @PostMapping
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<AlbumResponse> createAlbum(
-            @Valid @RequestBody CreateAlbumRequest request) {
+            @Valid @RequestBody CreateAlbumRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        request.setArtistId(userId); // ← from token
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(albumService.createAlbum(request));
     }
@@ -57,14 +58,18 @@ public class AlbumController {
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<AlbumResponse> updateAlbum(
             @PathVariable Long id,
-            @RequestBody UpdateAlbumRequest request) {
-        return ResponseEntity.ok(albumService.updateAlbum(id, request));
+            @RequestBody UpdateAlbumRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        return ResponseEntity.ok(
+                albumService.updateAlbum(id, request));
     }
 
     // Delete album — ARTIST only
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ARTIST')")
-    public ResponseEntity<String> deleteAlbum(@PathVariable Long id) {
+    public ResponseEntity<String> deleteAlbum(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long userId) {
         albumService.deleteAlbum(id);
         return ResponseEntity.ok("Album deleted successfully");
     }

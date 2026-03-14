@@ -25,7 +25,9 @@ public class SongController {
     @PostMapping
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<SongResponse> createSong(
-            @Valid @RequestBody CreateSongRequest request) {
+            @Valid @RequestBody CreateSongRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        request.setArtistId(userId); // ← from token
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(songService.createSong(request));
     }
@@ -55,7 +57,8 @@ public class SongController {
     @GetMapping("/public/genre/{genre}")
     public ResponseEntity<List<SongResponse>> getSongsByGenre(
             @PathVariable String genre) {
-        return ResponseEntity.ok(songService.getSongsByGenre(genre));
+        return ResponseEntity.ok(
+                songService.getSongsByGenre(genre));
     }
 
     // Get songs by artist — public
@@ -71,14 +74,18 @@ public class SongController {
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<SongResponse> updateSong(
             @PathVariable Long id,
-            @RequestBody UpdateSongRequest request) {
-        return ResponseEntity.ok(songService.updateSong(id, request));
+            @RequestBody UpdateSongRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        return ResponseEntity.ok(
+                songService.updateSong(id, request));
     }
 
     // Delete song — ARTIST only
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ARTIST')")
-    public ResponseEntity<String> deleteSong(@PathVariable Long id) {
+    public ResponseEntity<String> deleteSong(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long userId) {
         songService.deleteSong(id);
         return ResponseEntity.ok("Song deleted successfully");
     }
@@ -87,6 +94,7 @@ public class SongController {
     @PutMapping("/public/{id}/play")
     public ResponseEntity<SongResponse> incrementPlayCount(
             @PathVariable Long id) {
-        return ResponseEntity.ok(songService.incrementPlayCount(id));
+        return ResponseEntity.ok(
+                songService.incrementPlayCount(id));
     }
 }
