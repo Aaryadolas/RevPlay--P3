@@ -1,7 +1,5 @@
 package com.user.security;
 
-
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,32 +21,30 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+        String userEmail = request.getHeader("X-User-Email");
+        String userRole = request.getHeader("X-User-Role");
+        String userId = request.getHeader("X-User-Id");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        if (userEmail != null && userRole != null) {
 
-        String token = authHeader.substring(7);
-
-        if (jwtService.validateToken(token)) {
-            String email = jwtService.extractEmail(token);
-            String role  = jwtService.extractRole(token);
+            String role = userRole.toUpperCase();
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            email,
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                    );
+                new UsernamePasswordAuthenticationToken(
+                    userEmail,
+                    null,
+                    List.of(new SimpleGrantedAuthority(
+                        "ROLE_" + role))
+                );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext()
+                .setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);

@@ -1,6 +1,5 @@
 package com.revplay.controller;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,34 +23,36 @@ public class FavoriteController {
     // Add to favorites
     @PostMapping
     public ResponseEntity<FavoriteResponse> addFavorite(
-            @Valid @RequestBody FavoriteRequest request) {
+            @Valid @RequestBody FavoriteRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        request.setUserId(userId); // ← from token
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(favoriteService.addFavorite(request));
     }
 
     // Remove from favorites
-    @DeleteMapping("/user/{userId}/song/{songId}")
+    @DeleteMapping("/song/{songId}")
     public ResponseEntity<String> removeFavorite(
-            @PathVariable Long userId,
-            @PathVariable Long songId) {
+            @PathVariable Long songId,
+            @RequestHeader("X-User-Id") Long userId) {
         favoriteService.removeFavorite(userId, songId);
         return ResponseEntity.ok(
             "Song removed from favorites successfully");
     }
 
     // Get all favorites by user
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     public ResponseEntity<List<FavoriteResponse>> getFavoritesByUser(
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 favoriteService.getFavoritesByUser(userId));
     }
 
     // Check if song is favorited
-    @GetMapping("/check/user/{userId}/song/{songId}")
+    @GetMapping("/check/song/{songId}")
     public ResponseEntity<Boolean> isFavorited(
-            @PathVariable Long userId,
-            @PathVariable Long songId) {
+            @PathVariable Long songId,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 favoriteService.isFavorited(userId, songId));
     }
@@ -66,9 +67,9 @@ public class FavoriteController {
     }
 
     // Get total favorites count for user
-    @GetMapping("/user/{userId}/count")
+    @GetMapping("/user/count")
     public ResponseEntity<Integer> getTotalFavoritesByUser(
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 favoriteService.getTotalFavoritesByUser(userId));
     }
@@ -76,7 +77,9 @@ public class FavoriteController {
     // Get users who favorited a song — for artist analytics
     @GetMapping("/song/{songId}/users")
     public ResponseEntity<List<FavoriteResponse>>
-            getUsersWhoFavoritedSong(@PathVariable Long songId) {
+            getUsersWhoFavoritedSong(
+                @PathVariable Long songId,
+                @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 favoriteService.getUsersWhoFavoritedSong(songId));
     }
