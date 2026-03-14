@@ -1,6 +1,5 @@
 package com.revplay.controller;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,9 @@ public class PlaylistController {
     // Create playlist
     @PostMapping
     public ResponseEntity<PlaylistResponse> createPlaylist(
-            @Valid @RequestBody CreatePlaylistRequest request) {
+            @Valid @RequestBody CreatePlaylistRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        request.setUserId(userId); // ← from token
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(playlistService.createPlaylist(request));
     }
@@ -58,7 +59,8 @@ public class PlaylistController {
     @PutMapping("/{id}")
     public ResponseEntity<PlaylistResponse> updatePlaylist(
             @PathVariable Long id,
-            @RequestBody UpdatePlaylistRequest request) {
+            @RequestBody UpdatePlaylistRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 playlistService.updatePlaylist(id, request));
     }
@@ -66,7 +68,8 @@ public class PlaylistController {
     // Delete playlist
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePlaylist(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @RequestHeader("X-User-Id") Long userId) {
         playlistService.deletePlaylist(id);
         return ResponseEntity.ok("Playlist deleted successfully");
     }
@@ -75,7 +78,8 @@ public class PlaylistController {
     @PostMapping("/{id}/songs")
     public ResponseEntity<PlaylistResponse> addSong(
             @PathVariable Long id,
-            @Valid @RequestBody AddSongRequest request) {
+            @Valid @RequestBody AddSongRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 playlistService.addSongToPlaylist(id, request));
     }
@@ -84,7 +88,8 @@ public class PlaylistController {
     @DeleteMapping("/{id}/songs/{songId}")
     public ResponseEntity<PlaylistResponse> removeSong(
             @PathVariable Long id,
-            @PathVariable Long songId) {
+            @PathVariable Long songId,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 playlistService.removeSongFromPlaylist(id, songId));
     }
@@ -93,25 +98,27 @@ public class PlaylistController {
     @PutMapping("/{id}/songs/reorder")
     public ResponseEntity<PlaylistResponse> reorderSong(
             @PathVariable Long id,
-            @RequestBody ReorderSongRequest request) {
+            @RequestBody ReorderSongRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 playlistService.reorderSong(id, request));
     }
 
     // Follow playlist
-    @PostMapping("/{playlistId}/follow/{userId}")
+    @PostMapping("/{playlistId}/follow")
     public ResponseEntity<String> followPlaylist(
             @PathVariable Long playlistId,
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
-                playlistService.followPlaylist(playlistId, userId));
+                playlistService.followPlaylist(
+                    playlistId, userId));
     }
 
     // Unfollow playlist
-    @DeleteMapping("/{playlistId}/unfollow/{userId}")
+    @DeleteMapping("/{playlistId}/unfollow")
     public ResponseEntity<String> unfollowPlaylist(
             @PathVariable Long playlistId,
-            @PathVariable Long userId) {
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 playlistService.unfollowPlaylist(
                     playlistId, userId));
