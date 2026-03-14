@@ -6,12 +6,14 @@ import lombok.Data;
 @Data
 public class SongPlayRequest {
 
-	@NotNull(message = "Song ID is required")
-	private Long songId;
+    @NotNull(message = "Song ID is required")
+    private Long songId;
 
-	@NotNull(message = "Artist ID is required")
-	private Long artistId;
+    @NotNull(message = "Artist ID is required")
+    private Long artistId;
 
-	@NotNull(message = "User ID is required")
-	private Long userId;
+    // No @NotNull - comes from token
+    private Long userId;
+
+    private Integer listenedDuration;
 }

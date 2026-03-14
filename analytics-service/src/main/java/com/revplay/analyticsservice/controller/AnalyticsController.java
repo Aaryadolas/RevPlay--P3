@@ -26,7 +26,9 @@ public class AnalyticsController {
     // Record song play
     @PostMapping("/play")
     public ResponseEntity<SongPlayResponse> recordPlay(
-            @Valid @RequestBody SongPlayRequest request) {
+            @Valid @RequestBody SongPlayRequest request,
+            @RequestHeader("X-User-Id") Long userId) {
+        request.setUserId(userId); // ← from token
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(analyticsService.recordPlay(request));
     }
@@ -35,7 +37,8 @@ public class AnalyticsController {
     @GetMapping("/dashboard/artist/{artistId}")
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<ArtistDashboardResponse> getArtistDashboard(
-            @PathVariable Long artistId) {
+            @PathVariable Long artistId,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 analyticsService.getArtistDashboard(artistId));
     }
@@ -53,7 +56,8 @@ public class AnalyticsController {
     @GetMapping("/trends/daily/artist/{artistId}")
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<TrendResponse> getDailyPlays(
-            @PathVariable Long artistId) {
+            @PathVariable Long artistId,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 analyticsService.getDailyPlays(artistId));
     }
@@ -62,7 +66,8 @@ public class AnalyticsController {
     @GetMapping("/trends/weekly/artist/{artistId}")
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<TrendResponse> getWeeklyPlays(
-            @PathVariable Long artistId) {
+            @PathVariable Long artistId,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 analyticsService.getWeeklyPlays(artistId));
     }
@@ -71,7 +76,8 @@ public class AnalyticsController {
     @GetMapping("/trends/monthly/artist/{artistId}")
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<TrendResponse> getMonthlyPlays(
-            @PathVariable Long artistId) {
+            @PathVariable Long artistId,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 analyticsService.getMonthlyPlays(artistId));
     }
@@ -80,7 +86,8 @@ public class AnalyticsController {
     @GetMapping("/listeners/artist/{artistId}")
     @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<List<Long>> getTopListeners(
-            @PathVariable Long artistId) {
+            @PathVariable Long artistId,
+            @RequestHeader("X-User-Id") Long userId) {
         return ResponseEntity.ok(
                 analyticsService.getTopListeners(artistId));
     }
