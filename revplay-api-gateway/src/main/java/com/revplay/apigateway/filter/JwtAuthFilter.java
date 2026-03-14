@@ -23,6 +23,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     // public endpoints - no token needed
     private final List<String> PUBLIC_ENDPOINTS = List.of(
             "/api/users/register",
+            "/api/users/register/artist",
             "/api/users/login",
             "/api/songs/public",
             "/api/albums/public",
