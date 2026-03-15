@@ -9,12 +9,18 @@ import { Song } from '../../models/models';
     <div class="player-bar">
       <div class="player-song-info">
         <div class="song-cover" *ngIf="currentSong?.coverImage">
-          <img [src]="currentSong?.coverImage" [alt]="currentSong?.title" />
+          <img [src]="currentSong!.coverImage"
+            [alt]="currentSong!.title" />
         </div>
-        <div class="song-cover-placeholder" *ngIf="!currentSong?.coverImage">🎵</div>
+        <div class="song-cover-placeholder"
+          *ngIf="!currentSong?.coverImage">🎵</div>
         <div class="song-details">
-          <div class="song-title">{{ currentSong?.title || 'No Song Playing' }}</div>
-          <div class="song-artist">{{ currentSong?.artistName || 'Select a song' }}</div>
+          <div class="song-title">
+            {{ currentSong?.title || 'No Song Playing' }}
+          </div>
+          <div class="song-artist">
+            {{ currentSong?.artistName || 'Select a song' }}
+          </div>
         </div>
       </div>
 
@@ -29,7 +35,8 @@ import { Song } from '../../models/models';
         <div class="progress-bar-wrapper">
           <span class="time">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar" (click)="seek($event)">
-            <div class="progress-fill" [style.width.%]="progressPercent"></div>
+            <div class="progress-fill"
+              [style.width.%]="progressPercent"></div>
           </div>
           <span class="time">{{ formatTime(duration) }}</span>
         </div>
@@ -76,6 +83,7 @@ import { Song } from '../../models/models';
       height: 48px;
       border-radius: 8px;
       overflow: hidden;
+      flex-shrink: 0;
     }
     .song-cover img {
       width: 100%;
@@ -91,6 +99,7 @@ import { Song } from '../../models/models';
       align-items: center;
       justify-content: center;
       font-size: 20px;
+      flex-shrink: 0;
     }
     .song-title {
       font-weight: 600;
@@ -134,7 +143,9 @@ import { Song } from '../../models/models';
       align-items: center;
       justify-content: center;
     }
-    .play-btn:hover { background: var(--primary-dark) !important; }
+    .play-btn:hover {
+      background: var(--primary-dark) !important;
+    }
     .progress-bar-wrapper {
       display: flex;
       align-items: center;
@@ -188,21 +199,40 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subs.push(
-      this.playerService.currentSong$.subscribe(song => this.currentSong = song),
-      this.playerService.isPlaying$.subscribe(playing => {
-        this.isPlaying = playing;
-        if (playing) this.startTicker();
-        else this.stopTicker();
+      this.playerService.currentSong$.subscribe(song => {
+        console.log('Player received song:', song);
+        this.currentSong = song;
       }),
-      this.playerService.volume$.subscribe(vol => this.volume = vol)
+      this.playerService.isPlaying$.subscribe(playing => {
+        console.log('Player isPlaying:', playing);
+        this.isPlaying = playing;
+        if (playing) {
+          this.startTicker();
+        } else {
+          this.stopTicker();
+        }
+      }),
+      this.playerService.volume$.subscribe(vol => {
+        this.volume = vol;
+      })
     );
   }
 
-  togglePlay(): void { this.playerService.togglePlay(); }
-  next(): void { this.playerService.next(); }
-  previous(): void { this.playerService.previous(); }
+  togglePlay(): void {
+    this.playerService.togglePlay();
+  }
 
-  setVolume(): void { this.playerService.setVolume(this.volume); }
+  next(): void {
+    this.playerService.next();
+  }
+
+  previous(): void {
+    this.playerService.previous();
+  }
+
+  setVolume(): void {
+    this.playerService.setVolume(this.volume);
+  }
 
   seek(event: MouseEvent): void {
     const bar = event.currentTarget as HTMLElement;
@@ -223,7 +253,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.ticker = interval(500).subscribe(() => {
       this.currentTime = this.playerService.getCurrentTime();
       this.duration = this.playerService.getDuration();
-      this.progressPercent = this.duration ? (this.currentTime / this.duration) * 100 : 0;
+      this.progressPercent = this.duration
+        ? (this.currentTime / this.duration) * 100
+        : 0;
     });
   }
 

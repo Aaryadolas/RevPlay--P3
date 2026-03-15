@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Song } from '../../models/models';
 import { PlayerService } from '../../services/player.service';
 import { FavoriteService } from '../../services/other.services';
@@ -10,20 +10,30 @@ import { Router } from '@angular/router';
   template: `
     <div class="song-card" [class.playing]="isCurrentlyPlaying">
       <div class="card-image">
-        <img *ngIf="song.coverImage" [src]="song.coverImage" [alt]="song.title" />
-        <div *ngIf="!song.coverImage" class="cover-placeholder">🎵</div>
+        <img *ngIf="song.coverImage"
+          [src]="song.coverImage"
+          [alt]="song.title"
+          (error)="onImageError($event)" />
+        <div *ngIf="!song.coverImage" class="cover-placeholder">
+          🎵
+        </div>
         <div class="card-overlay">
-          <button class="add-btn" (click)="onAdd($event)" title="Add to playlist">+</button>
-          <button class="fav-btn" (click)="onFavorite($event)" [class.favorited]="isFav" title="Favorite">♥</button>
+          <button class="fav-btn"
+            (click)="onFavorite($event)"
+            [class.favorited]="isFav">♥</button>
         </div>
         <button class="play-btn" (click)="onPlay()">
           {{ isCurrentlyPlaying && isPlaying ? '⏸' : '▶' }}
         </button>
       </div>
       <div class="card-info">
-        <div class="song-title" (click)="onPlay()">{{ song.title }}</div>
+        <div class="song-title" (click)="onPlay()">
+          {{ song.title }}
+        </div>
         <div class="song-meta">
-          <span class="artist-name">{{ song.artistName || 'Unknown Artist' }}</span>
+          <span class="artist-name">
+            {{ song.artistName || 'Artist' }}
+          </span>
           <span class="genre-badge">{{ song.genre }}</span>
         </div>
       </div>
@@ -64,20 +74,18 @@ import { Router } from '@angular/router';
       align-items: center;
       justify-content: center;
       font-size: 40px;
-      background: linear-gradient(135deg, var(--accent), var(--primary-light));
+      background: linear-gradient(135deg,
+        var(--accent), var(--primary-light));
     }
     .card-overlay {
       position: absolute;
       top: 8px;
-      left: 8px;
       right: 8px;
-      display: flex;
-      justify-content: space-between;
       opacity: 0;
       transition: opacity 0.2s;
     }
     .song-card:hover .card-overlay { opacity: 1; }
-    .add-btn, .fav-btn {
+    .fav-btn {
       width: 28px;
       height: 28px;
       border-radius: 50%;
@@ -85,26 +93,22 @@ import { Router } from '@angular/router';
       background: rgba(255,255,255,0.9);
       font-size: 14px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: #9CA3AF;
       transition: all 0.15s;
     }
-    .add-btn:hover { background: var(--primary); color: white; }
-    .fav-btn { color: #9CA3AF; }
     .fav-btn.favorited { color: #EF4444; }
     .fav-btn:hover { color: #EF4444; }
     .play-btn {
       position: absolute;
       bottom: 8px;
       right: 8px;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       background: var(--primary);
       color: white;
       border: none;
-      font-size: 16px;
+      font-size: 18px;
       cursor: pointer;
       opacity: 0;
       transition: all 0.2s;
@@ -114,7 +118,10 @@ import { Router } from '@angular/router';
       box-shadow: 0 4px 12px rgba(139,92,246,0.4);
     }
     .song-card:hover .play-btn { opacity: 1; }
-    .play-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+    .play-btn:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
     .card-info { padding: 12px; }
     .song-title {
       font-weight: 600;
@@ -150,7 +157,7 @@ import { Router } from '@angular/router';
     }
   `]
 })
-export class SongCardComponent {
+export class SongCardComponent implements OnInit {
   @Input() song!: Song;
   @Input() queue: Song[] = [];
   @Output() addToPlaylist = new EventEmitter<Song>();
@@ -164,19 +171,31 @@ export class SongCardComponent {
     private favoriteService: FavoriteService,
     private authService: AuthService,
     private router: Router
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.playerService.currentSong$.subscribe(s => {
       this.isCurrentlyPlaying = s?.id === this.song?.id;
     });
-    this.playerService.isPlaying$.subscribe(p => this.isPlaying = p);
+    this.playerService.isPlaying$.subscribe(p => {
+      this.isPlaying = p;
+    });
   }
 
   onPlay(): void {
+    console.log('onPlay clicked, song:', this.song);
+    if (!this.song) return;
+
     if (this.isCurrentlyPlaying) {
       this.playerService.togglePlay();
     } else {
-      this.playerService.playSong(this.song, this.queue.length ? this.queue : [this.song]);
+      const q = this.queue.length ? this.queue : [this.song];
+      this.playerService.playSong(this.song, q);
     }
+  }
+
+  onImageError(event: any): void {
+    event.target.style.display = 'none';
   }
 
   onFavorite(event: Event): void {
@@ -186,18 +205,13 @@ export class SongCardComponent {
       return;
     }
     if (this.isFav) {
-      this.favoriteService.removeFavorite(this.song.id!).subscribe(() => this.isFav = false);
+      this.favoriteService.removeFavorite(
+        this.song.id!
+      ).subscribe(() => this.isFav = false);
     } else {
-      this.favoriteService.addFavorite(this.song.id!).subscribe(() => this.isFav = true);
+      this.favoriteService.addFavorite(
+        this.song.id!
+      ).subscribe(() => this.isFav = true);
     }
-  }
-
-  onAdd(event: Event): void {
-    event.stopPropagation();
-    if (!this.authService.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    this.addToPlaylist.emit(this.song);
   }
 }

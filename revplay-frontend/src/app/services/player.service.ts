@@ -25,6 +25,7 @@ export class PlayerService {
   }
 
   playSong(song: Song, queue?: Song[]): void {
+    console.log('PlayerService playSong:', song);
     if (queue) {
       this.queueSubject.next(queue);
       const index = queue.findIndex(s => s.id === song.id);
@@ -32,9 +33,20 @@ export class PlayerService {
     }
     this.currentSongSubject.next(song);
     if (song.audioUrl) {
+      this.audio.pause();
       this.audio.src = song.audioUrl;
-      this.audio.play().catch(() => {});
-      this.isPlayingSubject.next(true);
+      this.audio.load();
+      this.audio.play()
+        .then(() => {
+          console.log('Audio playing!');
+          this.isPlayingSubject.next(true);
+        })
+        .catch(err => {
+          console.error('Audio error:', err);
+          this.isPlayingSubject.next(false);
+        });
+    } else {
+      console.error('No audioUrl for song:', song);
     }
   }
 
